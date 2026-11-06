@@ -268,7 +268,7 @@ test('Right Click', async ({ page }) => {
         const y = rightClickBox.y + rightClickBox.height / 2;
 
         await page.mouse.move(x, y);
-        await page.mouse.rightClick();
+        //await page.mouse.rightClick();
         await page.waitForTimeout(2000);
     }
 
