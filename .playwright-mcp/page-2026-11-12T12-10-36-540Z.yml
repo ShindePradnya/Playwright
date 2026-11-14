@@ -1,0 +1,25 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - main [ref=e3]:
+    - heading [level=1] [ref=e4]
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - heading "Sorry, you are not permitted to visit this site" [level=2] [ref=e13]
+        - generic [ref=e17]:
+          - paragraph [ref=e18]: You have attempted to access a web page that violates Capgemini’s Internet Security Policy and has been restricted.
+          - paragraph [ref=e19]: "Category: Social Networking You tried to visit: https://www.facebook.com/"
+          - paragraph [ref=e20]:
+            - text: If you have any specific business need to require access, please submit exception approval request through ServiceCentral
+            - link "here" [ref=e21] [cursor=pointer]:
+              - /url: https://servicecentral.capgemini.com/sc?id=sc_order_guide&sys_id=7371b93fdbfc30907b72043bd39619d9&table=sc_cat_item&searchTerm=Web%20content
+            - text: .
+          - paragraph [ref=e22]:
+            - text: If you believe the page was blocked in error, you can raise an incident under Contextual Access via ServiceCentral
+            - link "here" [ref=e23] [cursor=pointer]:
+              - /url: https://servicecentral.capgemini.com/sc?id=sc_cat_item&sys_id=bf696743dbb94c10be58294505961918
+            - text: .
+      - paragraph [ref=e25]:
+        - text: Need help? Contact our support team at
+        - link "ithelp.global@capgemini.com" [ref=e26] [cursor=pointer]:
+          - /url: mailto:ithelp.global@capgemini.com

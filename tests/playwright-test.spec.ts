@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect,request } from '@playwright/test';
 
 test('First Playwright Test', async ({ page }) => {
 
@@ -260,17 +260,225 @@ test('Right Click', async ({ page }) => {
 
     await page.goto('https://deluxe-menu.com/popup-mode-sample.html');
 
-    const rightClickTarget = page.locator('#right-click-target');
-    const rightClickBox = await rightClickTarget.boundingBox();
-    await page.waitForTimeout(2000);
-    if (rightClickBox) {
-        const x = rightClickBox.x + rightClickBox.width / 2;
-        const y = rightClickBox.y + rightClickBox.height / 2;
+    await page.locator('//p[2]/img').click({button : 'right'});
 
-        await page.mouse.move(x, y);
-        //await page.mouse.rightClick();
-        await page.waitForTimeout(2000);
-    }
+    await page.locator('#dm2m1i1it').click();
+    await page.waitForTimeout(1000);
+    await page.locator('#dm2m2i4tdT').hover();
+    await page.locator('#dm2m4i0tdT').hover();
+    await page.waitForTimeout(1000);
 
 });
 
+
+test('Handling alerts', async ({ page }) => {
+
+    page.on('dialog',async diaglog =>{
+    await page.waitForTimeout(2000);
+    console.log(diaglog.message());
+    await diaglog.accept();
+    });
+
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://mail.rediff.com/cgo-bin/login.cgi');
+    
+
+    await page.locator('.signin-btn').click();
+    await page.waitForTimeout(1000);
+
+});
+
+
+test('Handling Iframes', async ({ page }) => {
+
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_submit');
+    
+    const frame =page.frameLocator('#iframeResult');
+    await frame.locator('#fname').fill('');
+    await frame.locator('#fname').fill('John');
+    await frame.locator('#lname').fill('');
+    await frame.locator('#lname').fill('Joe');
+
+        await frame.locator('[type="submit"]').click();
+
+    await page.waitForTimeout(1000);
+
+});
+
+
+test('Handling tabs and popups ', async ({ page }) => {
+
+
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://www.way2automation.com/way2auto_jquery/automation-practice-site.html');
+    
+    const [newPage] =await Promise.all([
+        page.waitForEvent('popup'),
+        page.locator('//*[@id="wrapper"]/div/div/div[3]/ul/li/a/figure').click()
+    ])
+
+    await newPage.waitForLoadState();
+
+    const frame =newPage.frames()[1];
+
+    const [secondTab] = await Promise.all([
+        newPage.waitForEvent('popup'),
+        frame.locator('text=New Browser Tab').click(),
+    ])
+
+    await secondTab.waitForLoadState();
+    console.log(await secondTab.title());
+
+    secondTab.close();
+    await page.waitForTimeout(1000);
+    newPage.close();
+
+    await page.waitForTimeout(1000);
+
+});
+
+
+test('Java Script and screenshot', async ({ page }) => {
+
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_submit');
+    
+    const frame =page.frameLocator('#iframeResult');
+    await frame.locator('#fname').fill('');
+    await frame.locator('#fname').fill('John');
+    await frame.locator('#lname').fill('');
+    await frame.locator('#lname').fill('Joe');
+
+    await frame.locator('[type="submit"]').evaluate((element: HTMLElement)=>{
+    element.style.border ='3px solid red';
+ });
+ await page.waitForTimeout(1000);
+ await frame.locator('[type="submit"]').screenshot({path:'screenshot/submit.png'});
+ await page.screenshot({path:'screenshot/screenshot.png',fullPage:true});
+});
+
+
+test('HTTP authentication', async ({ browser }) => {
+
+    const context= await browser.newContext({
+        httpCredentials:{
+            username: 'admin',
+            password: 'admin'
+        }
+
+    })
+    const page =await context.newPage();
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://tes-internet.herokuapp.com/basic_auth');
+
+    await page.waitForTimeout(1000);
+    
+});
+
+
+
+test('File Upload', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://www.way2automation.com/way2auto_jquery/registration.php#load_box');
+
+    await page.locator('#register_form > fieldset:nth-child(9) > input[type=file]').setInputFiles('C:\\Users\\pradnshi\\OneDrive - Capgemini\\Pictures\\Screenshots\\Node js.png')
+    await page.waitForTimeout(1000);
+    
+});
+
+
+test('Multiple File Upload', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_fileupload_multiple');
+
+    const frame =await page.frameLocator('#iframeResult')
+    await frame.locator('#myFile').setInputFiles([
+        'C:\\Users\\pradnshi\\OneDrive - Capgemini\\Pictures\\Screenshots\\Node js.png',
+        'C:\\Users\\pradnshi\\OneDrive - Capgemini\\Pictures\\Screenshots\\Error.png'
+    ]);
+        await page.waitForTimeout(1000);
+    });
+
+    import path from 'path';
+    import fs from 'fs';
+
+test('File Downloading', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('https://www.selenium.dev/downloads/');
+    await page.pause();
+    const [download] =await Promise.all([
+        page.waitForEvent('download'), //Listens for the download event
+        page.locator('xpath=/html/body/div[2]/main/div[3]/div[2]/div/div/p[1]/a').click()
+    ]);
+
+    const projectDirectory =path.join(__dirname,'downloads');
+    if(!fs.existsSync(projectDirectory)){
+        fs.mkdirSync(projectDirectory);
+    }
+    const filePath =path.join(projectDirectory,'selenium.jar');
+    await download.saveAs(filePath);// Saves the file to the specified path
+    console.log("File Downloaded to: "+filePath);
+        await page.waitForTimeout(1000);
+    });    
+
+    test('First Page Agent Test', async ({ page }) => {
+   
+    test.setTimeout(100000);
+    await page.goto('https://www.way2automation.com/way2auto_jquery/index.php');
+
+    const title= await page.title();
+    console.log(title);
+    await expect(title).toContain('Welcome');
+
+    await page.addScriptTag({url: 'https://cdn.jsdelivr.net/npm/page-agent@1.12.4/dist/iife/page-agent.demo.js'});
+    
+    await page.evaluate(async ()=>{
+        const PageAgentCtor =(window as any).PageAgent;
+        if(!PageAgentCtor){
+            throw new Error('PageAgent was not loaded on the page');
+        }
+
+        const agent =new PageAgentCtor({
+            model: 'gemini-3-flash-preview',
+            baseURL:'https://generativelanguage.googleapis.com/v1beta',
+            apiKey: '',
+            language: 'en-Us',
+        })
+
+        await agent.execute('Fill the dummy registration form with random data and submit the form')
+    });
+});
+
+test('API Response Get', async () => {
+    
+    const requestContext = await request.newContext();
+    const response =await requestContext.get('http://localhost:8080/api/users/1');
+    console.log(await response.json());
+    console.log(response.status());
+    expect(response.status()).toBe(200);
+
+    const jsonResponse =await response.json();
+    expect(jsonResponse.firstName).toBe('Rahul');
+    console.log(jsonResponse.firstName);
+
+});
+
+test('API Response POST', async () => {
+    
+    const requestContext = await request.newContext();
+    const response =await requestContext.post('http://localhost:8080/api/users',{
+    data:{
+            "firstName": "Donal",
+            "lastName": "Trump",
+            "email": "trump@way2automation.com",
+
+        },headers:{
+            'Contenet-Type':'application/json',
+    }
+    });
+    expect(response.status()).toBe(201);
+    console.log(await response.status());
+    console.log(await response.text());
+
+});
