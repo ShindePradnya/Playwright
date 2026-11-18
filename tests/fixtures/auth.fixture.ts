@@ -13,14 +13,14 @@ export const test = base.extend<MyFixtures>({
     }
 
     await page.goto(
-      'https://www.way2automation.com/MediShopWebApp/login.html'
+      '/MediShopWebApp/login.html'
     );
 
     await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
 
-    await page.getByLabel('Email address').fill(email);
-    await page.getByTestId('password_id').fill(password);
+    await page.getByLabel('Email address').fill(process.env.TEST_EMAIL);
+    await page.getByTestId('password_id').fill(process.env.TEST_PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
 
     await expect(page).not.toHaveURL(/login/);

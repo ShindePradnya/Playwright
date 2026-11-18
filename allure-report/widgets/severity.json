@@ -1,0 +1,1 @@
+[{"uid":"c412999b5dcd3a37","name":"chrome","time":{"start":1794988722806,"stop":1794988753191,"duration":30385},"status":"broken","severity":"normal"},{"uid":"cd8243d9d3b7bf07","name":"edge","time":{"start":1794988722741,"stop":1794988731101,"duration":8360},"status":"passed","severity":"normal"}]

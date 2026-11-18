@@ -23,23 +23,25 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter:[['html'],['allure-playwright']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: 'https://www.way2automation.com',
     video: 'off',
     trace: 'off',
+    screenshot: 'only-on-failure',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     //trace: 'on-first-retry',
-    browserName: 'chromium',
-    headless: true,
+    // browserName: 'chromium',
+    headless: false,
     ...devices['Desktop Chrome'],
   },
 
   projects: [
     {
       name: 'chrome',
+      //testMatch: [/.*chrome-test\.spec\.ts/, /.*parameterization-test\.spec\.ts/],
       use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
 
@@ -54,14 +56,11 @@ export default defineConfig({
     // },
 
     /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+     {
+       name: 'Microsoft Edge',
+       //testMatch: [/.*edge-test\.spec\.ts/, /.*parameterization-test\.spec\.ts/],
+       use: { ...devices['Desktop Edge'], channel: 'msedge' },
+     },
   ],
 
   /* Run your local dev server before starting the tests */
